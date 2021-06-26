@@ -34,7 +34,7 @@ def plot(func, path):
 
 
 def plot_iterations(func, path):
-    func_values = [func(x)[0] for x in path]
+    func_values = [func(x, False)[0] for x in path]
     plt.plot(func_values)
     plt.savefig(f"{func.__name__}_iterations.png")
     plt.clf()
