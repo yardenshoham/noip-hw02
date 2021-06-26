@@ -25,7 +25,7 @@ def line_search(dir_selection_method, f, x0, step_size, obj_tol, param_tol, max_
             hessian_next = selected_dir
 
         # Wolfe
-        while dir_selection_method != 'gd' and f_next > f_prev + slope_ratio * step_alpha * df_prev * selected_dir:
+        while dir_selection_method != 'gd' and f_next > f_prev + np.linalg.norm(slope_ratio * step_alpha * df_prev * selected_dir):
             step_alpha *= back_track_factor
             x_next = x_prev + step_alpha * selected_dir
             if dir_selection_method == 'bfgs':
