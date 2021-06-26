@@ -29,3 +29,13 @@ def plot(func, path):
 
     ax.scatter(x_1, x_2, s=0.8)
     plt.savefig(f"{func.__name__}.png")
+    plt.clf()
+    plt.cla()
+
+
+def plot_iterations(func, path):
+    func_values = [func(x)[0] for x in path]
+    plt.plot(func_values)
+    plt.savefig(f"{func.__name__}_iterations.png")
+    plt.clf()
+    plt.cla()
