@@ -6,23 +6,22 @@ import numpy as np
 def line_search(dir_selection_method, f, x0, step_size, obj_tol, param_tol, max_iter, init_step_len=1.0, slope_ratio=1e-4, back_track_factor=0.2):
     x_prev = x0
     f_prev, df_prev, hessian_prev = f(x0)
-    path = [x_prev]
+    path = []
     i = 0
     success = False
     step_alpha = step_size if dir_selection_method == 'gd' else init_step_len
     while i < max_iter:
         if dir_selection_method == 'gd':
             selected_dir = -df_prev
-        elif dir_selection_method == 'nt':
+        else:
             selected_dir = newton_dir(hessian_prev, df_prev)
 
         x_next = x_prev + step_alpha * selected_dir
         f_next, df_next, hessian_next = f(x_next)
 
         if dir_selection_method == 'bfgs':
-            selected_dir = bfgs_dir(
+            selected_dir, hessian_next = bfgs_dir(
                 hessian_prev, x_next, x_prev, df_next, df_prev)
-            hessian_next = selected_dir
 
         # Wolfe
         while dir_selection_method != 'gd' and f_next > f_prev + np.linalg.norm(slope_ratio * step_alpha * df_prev * selected_dir):
@@ -60,8 +59,11 @@ def newton_dir(hessian_prev, df_prev):
 
 
 def bfgs_dir(B_k, x_kplus1, x_k, nabla_f_x_kplus1, nabla_f_x_k):
-    s_k = x_kplus1 - x_k
-    y_k = nabla_f_x_kplus1 - nabla_f_x_k
-    B_kplus1 = B_k - (B_k * s_k * s_k.T * B_K) / \
-        (s_k.T * B_k * s_k) + (y_k * y_k.T) / (y_k.T * s_k)
-    return newton_dir(B_k, nabla_f_x_k)
+    s_k = (x_kplus1 - x_k).reshape(-1, 1)
+    y_k = (nabla_f_x_kplus1 - nabla_f_x_k).reshape(-1, 1)
+    calc0 = B_k @ s_k
+    calc1 = calc0 @ s_k.T
+    calc2 = calc1 @ B_k.T
+    B_kplus1 = B_k - calc2 / (s_k.T @ B_k @ s_k) + \
+        (y_k @ y_k.T) / (y_k.T @ s_k)
+    return newton_dir(B_k, nabla_f_x_k), B_kplus1
