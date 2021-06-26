@@ -21,7 +21,7 @@ def plot(func, path):
     for i in range(X1.shape[0]):
         for j in range(X1.shape[1]):
             x = np.array([X1[i][j], X2[i][j]])
-            F[i][j], _, _ = func(x)
+            F[i][j], _, _ = func(x, False)
 
     fig, ax = plt.subplots()
     cp = ax.contour(X1, X2, F)
