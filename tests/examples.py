@@ -58,3 +58,25 @@ def linear(x, compute_hessian=False):
     else:
         hessian = None
     return computed, derivative, hessian
+
+
+def qp(x, compute_hessian=False):
+    computed = x[0] ** 2 + x[1] ** 2 + (x[2] + 1) ** 2
+    derivative = np.array([2 * x[0], 2 * x[1], 2 * (x[2] + 1)])
+    if compute_hessian:
+        hessian = np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]])
+    else:
+        hessian = None
+    return computed, derivative, hessian
+
+
+def qp_ineq0(x):
+    return -x[0], np.array([0, 0, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
+
+def qp_ineq1(x):
+    return -x[1], np.array([0, 0, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
+
+def qp_ineq2(x):
+    return -x[2], np.array([0, 0, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
