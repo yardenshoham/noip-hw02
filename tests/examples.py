@@ -71,12 +71,38 @@ def qp(x, compute_hessian=False):
 
 
 def qp_ineq0(x):
-    return -x[0], np.array([0, 0, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+    return -x[0], np.array([-1, 0, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
 
 def qp_ineq1(x):
-    return -x[1], np.array([0, 0, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+    return -x[1], np.array([0, -1, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
 
 def qp_ineq2(x):
-    return -x[2], np.array([0, 0, 0]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+    return -x[2], np.array([0, 0, -1]), np.array([[0, 0, 0], [0, 0, 0], [0, 0, 0]])
+
+
+def lp(x, compute_hessian=False):
+    computed = -x[0] - x[1]
+    derivative = np.array([-1, -1])
+    if compute_hessian:
+        hessian = np.array([[0, 0], [0, 0]])
+    else:
+        hessian = None
+    return computed, derivative, hessian
+
+
+def lp_ineq0(x):
+    return -x[0] - x[1] + 1, np.array([-1, -1]), np.array([[0, 0], [0, 0]])
+
+
+def lp_ineq1(x):
+    return x[1] - 1, np.array([0, 1]), np.array([[0, 0], [0, 0]])
+
+
+def lp_ineq2(x):
+    return x[0] - 2, np.array([1, 0]), np.array([[0, 0], [0, 0]])
+
+
+def lp_ineq3(x):
+    return -x[1], np.array([0, -1]), np.array([[0, 0], [0, 0]])

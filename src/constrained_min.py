@@ -9,11 +9,17 @@ def objective_function(t, f, ineqs):
         return -np.sum(m)
 
     def df_phi(x): return -np.sum(ineq(x)[1] / ineq(x)[0] for ineq in ineqs)
-    def hessian_phi(x): return np.sum(ineq(x)[1] @ ineq(x)[
-        1].T / (ineq(x)[0] ** 2) for ineq in ineqs) - np.sum(ineq(x)[2] / ineq(x)[0] for ineq in ineqs)
+
+    def hessian_phi(x):
+        h_phi = np.zeros((x.shape[0], x.shape[0]))
+        for ineq in ineqs:
+            computed, df, hessian = ineq(x)
+            df = df[:, np.newaxis]
+            h_phi += df @ df.T / (computed ** 2) - hessian / computed
+        return h_phi
 
     def res(x, compute_hessian=False):
-        o_computed, o_df, o_hessian = f(x,  compute_hessian)
+        o_computed, o_df, o_hessian = f(x, compute_hessian)
         computed = t * o_computed + phi(x)
         df = t * o_df + df_phi(x)
         if compute_hessian:
@@ -45,8 +51,9 @@ def interior_pt(func, ineq_constraints, eq_constraints_mat, eq_constraints_rhs, 
     while m / t > 1e-5:
         the_function = objective_function(t, func, ineq_constraints)
         if eq_constraints_mat is None:
-            x_min, success, path = unconstrained_min.line_search(
+            x_min, success, line_search_path = unconstrained_min.line_search(
                 "nt", the_function, x_min, step_size=0.1, obj_tol=1e-12, param_tol=1e-8, max_iter=1000)
+            path.extend(line_search_path)
         else:
             x_prev = x_min
             f_prev, df_prev, hessian_prev = the_function(x_min, True)

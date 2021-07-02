@@ -41,9 +41,7 @@ def plot_iterations(func, path):
     plt.cla()
 
 
-def plot_constrained(func, path, x_min):
-    func_name = func.__name__
-
+def plot_constrained_qp(func, path, x_min):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.set_title('feasible region')
@@ -63,12 +61,38 @@ def plot_constrained(func, path, x_min):
                label=f'final candidate ({rounded_x}, {rounded_y}, {rounded_z})')
 
     # feasible region
-    if func_name == "qp":
-        xs, ys, zs = [1, 0, 0], [0, 1, 0], [0, 0, 1]
-        ax.plot_trisurf(xs, ys, zs, alpha=0.3)
+    xs, ys, zs = [1, 0, 0], [0, 1, 0], [0, 0, 1]
+    ax.plot_trisurf(xs, ys, zs, alpha=0.3)
 
     ax.legend()
-    plt.show()
-    plt.savefig(f"plot_constrained_{func_name}.png")
+    # plt.show()
+    plt.savefig(f"plot_constrained_qp.png")
+    plt.clf()
+    plt.cla()
+
+
+def plot_constrained_lp(path, x_min):
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    ax.set_title('feasible region')
+
+    # path
+    xs, ys = [], []
+    for x, y in path:
+        xs.append(x)
+        ys.append(y)
+    ax.plot(xs, ys, label='path')
+    rounded_x = np.around(x_min[0], 2)
+    rounded_y = np.around(x_min[1], 2)
+    ax.scatter(x_min[0], x_min[1],
+               label=f'final candidate ({rounded_x}, {rounded_y})')
+
+    # feasible region
+    x = np.arange(0, 2, 0.01)
+    y = -x + 1
+    ax.fill_between(x, y, 1, alpha=0.3)
+
+    ax.legend()
+    plt.savefig(f"plot_constrained_lp.png")
     plt.clf()
     plt.cla()
