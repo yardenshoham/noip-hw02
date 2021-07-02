@@ -41,7 +41,7 @@ def plot_iterations(func, path):
     plt.cla()
 
 
-def plot_constrained_qp(func, path, x_min):
+def plot_constrained_qp(path, x_min):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.set_title('feasible region')
